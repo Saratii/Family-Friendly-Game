@@ -1,7 +1,9 @@
+import re
 import pygame
 import MenuScreen
 import Game
 import FamilyFriendlyBubble
+import RotationalBullshitery
 
 screen = pygame.display.set_mode((1920, 1080), pygame.NOFRAME)
 status = "Menu"
@@ -16,12 +18,21 @@ pressed_left = False
 pressed_right = False
 pressed_up = False
 running = True
+isFired = False
+framesOnFired = 0
+
+
 while running:
     clock.tick(60)
     if status == "Menu":
         MenuScreen.Menu(screen)
     elif status == "Playing":
-        Game.mainGame(screen, px, py)
+        Game.mainGame(screen, px, py, isFired)
+        if framesOnFired > 3:
+            isFired = False
+            framesOnFired = 0
+        if isFired:
+            framesOnFired+=1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -36,6 +47,8 @@ while running:
                 dy = y-Game.height/2
                 #print(f'DX {dx} DY {dy} X {x} Y {y}')
                 Game.bubbles.append(FamilyFriendlyBubble.Bubble(px, py+10, 15*dx/(dx*dx+dy*dy)**0.5, 15*dy/(dx*dx+dy*dy)**0.5, screen))
+                isFired = True
+                
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 pressed_left = True
