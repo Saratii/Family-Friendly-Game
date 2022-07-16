@@ -35,7 +35,7 @@ class boss:
         if self.yPos > py - 200:
             self.yPos -= self.vel
     def dwa(self, px, py):
-        if self.xPos < Game.width//2:
+        if self.xPos+150 < px:
             self.screen.blit(pygame.transform.flip(bossImage, True, False), (self.xPos-px+150, self.yPos-py+100))
         else:
             self.screen.blit(bossImage, (self.xPos-px+150, self.yPos-py+100)) 

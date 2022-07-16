@@ -1,4 +1,6 @@
+
 import pygame
+import FamilyFriendlyBubble
 import RotationalBullshitery
 import Boss
 
@@ -16,6 +18,7 @@ bubbleGunRect.center = (width/2, height/2+18)
 darkGrey = (47, 47, 47)
 bubbles = []
 lizzos = []
+
 lizzoTimer = 0
 score = 0
 scoreList = []
@@ -26,12 +29,13 @@ with open('save.txt') as f:
     lines = f.readlines()
     for line in lines:
         scoreList.append(line.split(","))
-lizzoDifficultyCounter = 100000
+lizzoDifficultyCounter = 100
 
 def mainGame(screen, px, py, isFired, setStatus):
     global lizzoDifficultyCounter
     global lizzoTimer
-    print(px)
+    global lizzos
+    global bubbles
     lizzoTimer += 1
     if lizzoTimer % lizzoDifficultyCounter == 0:
         lizzos.append(Boss.boss(screen, px, py))
@@ -50,13 +54,14 @@ def mainGame(screen, px, py, isFired, setStatus):
         bubble.dwa(px-width//2, py-height//2)
         if bubble.lifetime < 1:
             bubbles.remove(bubble)
-    for bubble in bubbles:
         for lizzo in lizzos:
             if lizzo.doIBeShot(bubble):
-                bubbles.remove(bubble)
+                if bubble in bubbles:
+                    bubbles.remove(bubble)
                 lizzos.remove(lizzo)
                 global score
                 score += 1
+        
     
 
     rotGun, rotGunRect = RotationalBullshitery.gunRotate(bubbleGun, isFired)
@@ -77,6 +82,17 @@ def reset(px, py):
     py = 1080/2
     return px, py
 
-
-    
-
+def shoot(screen, bubbles, px, py):
+    x, y = pygame.mouse.get_pos()
+    dx = x-width/2
+    dy = y-height/2
+    #print(f'DX {dx} DY {dy} X {x} Y {y}')
+    bubbles.append(FamilyFriendlyBubble.Bubble(px, py+10, 15*dx/(dx*dx+dy*dy)**0.5, 15*dy/(dx*dx+dy*dy)**0.5, screen))
+    isFired = True
+    return isFired
+def automatic(screen, bubbles, px, py, timer):
+    timer += 1
+    if timer % 10 == 0:
+        isFired = shoot(screen, bubbles, px, py)
+    else: isFired = False
+    return isFired, timer

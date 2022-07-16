@@ -20,7 +20,8 @@ pressed_up = False
 running = True
 isFired = False
 framesOnFired = 0
-
+holdingDown = False
+timer = 0
 
 def setStatus(status2):
     global status
@@ -39,23 +40,26 @@ while running:
             framesOnFired = 0
         if isFired:
             framesOnFired+=1
+        if holdingDown:
+            isFired, timer = Game.automatic(screen, Game.bubbles, px, py, timer)
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
-            pointer = pygame.mouse.get_pos()
-            if status == "Menu":
-                if MenuScreen.start_button_rect.collidepoint(pointer):
-                    status = "Playing"
-            elif status == "Playing":
-                x, y = pygame.mouse.get_pos()
-                dx = x-Game.width/2
-                dy = y-Game.height/2
-                #print(f'DX {dx} DY {dy} X {x} Y {y}')
-                Game.bubbles.append(FamilyFriendlyBubble.Bubble(px, py+10, 15*dx/(dx*dx+dy*dy)**0.5, 15*dy/(dx*dx+dy*dy)**0.5, screen))
-                isFired = True
-                
-        if event.type == pygame.KEYDOWN:
+            if holdingDown: 
+                holdingDown = False
+            else:
+                pointer = pygame.mouse.get_pos()
+                if status == "Menu":
+                    if MenuScreen.start_button_rect.collidepoint(pointer):
+                        status = "Playing"
+                elif status == "Playing":
+                    isFired = Game.shoot(screen, Game.bubbles, px, py)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if status == "Playing":
+                holdingDown = True       
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
                 pressed_left = True
             elif event.key == pygame.K_d: 
