@@ -22,12 +22,18 @@ isFired = False
 framesOnFired = 0
 
 
+def setStatus(status2):
+    global status
+    status = status2
+
 while running:
     clock.tick(60)
-    if status == "Menu":
+    if status == "lizzoed":
+        MenuScreen.lizzoed(screen)
+    elif status == "Menu":
         MenuScreen.Menu(screen)
     elif status == "Playing":
-        Game.mainGame(screen, px, py, isFired)
+        Game.mainGame(screen, px, py, isFired, setStatus)
         if framesOnFired > 3:
             isFired = False
             framesOnFired = 0
@@ -67,6 +73,10 @@ while running:
                 pressed_up = False
             elif event.key == pygame.K_s:
                 pressed_down = False 
+            elif event.key == pygame.K_SPACE and status == "lizzoed":
+                px, py = Game.reset(px, py)
+                status = "Playing"
+
     if pressed_left:
         px -= speed
     if pressed_right:
@@ -78,3 +88,5 @@ while running:
     
     #print(clock.get_fps())
     pygame.display.flip()
+
+

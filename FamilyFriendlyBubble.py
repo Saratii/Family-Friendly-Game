@@ -3,7 +3,7 @@ import pygame
 class Bubble:
     red = (255, 0, 0)
     def __init__(self, posX, posY, velX, velY, screen):
-        self.mask = pygame.mask.Mask((3, 3), True)
+        self.mask = pygame.mask.Mask((9, 9), True)
         self.posX = posX
         self.posY = posY
         self.velX = velX
